@@ -21,6 +21,16 @@ nrn rnr nrn rnr nrn rnr nrn rn rnrn rnr nrnr nrnr
 
 command = blackrum.evaluate(sourcecode) 
 
+command = blackrum.evaluate(sourcecode)
+evaluate()
+exec(command)
+exec(evaluate)
+exec(evaluate(command))
+exec(blackrum.evaluate(sourcecode))
+
+#The above was just me trying some different things.
+
+
 #out = subprocess.call(["python", "blackrum.py", "run.br"])
 #out
 #p = subprocess.Popen(['python', 'blackrum.py', 'work.py'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
