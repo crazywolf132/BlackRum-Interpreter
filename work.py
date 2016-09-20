@@ -15,8 +15,11 @@ bbb bbb bbb bbb bbb bbb bb
 nrn rnr nrn rnr nrn rnr nrn rn rnrn rnr nrnr nrnr
 """
 
-command = 'blackrum.evaluate(sourcecode)'
-exec(command)
+# The above giberish translates to: print 'Hello, world!'
+# Below command translates the gibberis to ^^^
+# I want to run the output like raw python.
+
+command = blackrum.evaluate(sourcecode) 
 
 #out = subprocess.call(["python", "blackrum.py", "run.br"])
 #out
