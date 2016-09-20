@@ -23,37 +23,37 @@ def evaluate(code):
   while codeptr < len(code):
     command = code[codeptr]
 
-    if command == "1100":
+    if command == "n":
       cellptr += 1
       if cellptr == len(cells): cells.append(0)
 
-    if command == "1011":
+    if command == "b":
       cellptr = 0 if cellptr <= 0 else cellptr - 1
 
-    if command == "1010":
+    if command == "p":
       cells[cellptr] = cells[cellptr] + 1 if cells[cellptr] < 255 else 0
 
-    if command == "1001":
+    if command == "m":
       cells[cellptr] = cells[cellptr] - 1 if cells[cellptr] > 0 else 255
 
-    if command == "1000" and cells[cellptr] == 0: codeptr = bracemap[codeptr]
-    if command == "0111" and cells[cellptr] != 0: codeptr = bracemap[codeptr]
-    if command == "0110": sys.stdout.write(chr(cells[cellptr]))
-    if command == "0101": cells[cellptr] = ord(getch.getch())
-      
+    if command == "o" and cells[cellptr] == 0: codeptr = bracemap[codeptr]
+    if command == "c" and cells[cellptr] != 0: codeptr = bracemap[codeptr]
+    if command == "r": sys.stdout.write(chr(cells[cellptr]))
+    if command == "i": cells[cellptr] = ord(getch.getch())
+
     codeptr += 1
 
 
 def cleanup(code):
-  return filter(lambda x: x in ['0110', '0101', '1000	', '0111', '1011', '1100', '1010', '1001'], code)
+  return filter(lambda x: x in ['r', 'i', 'o', 'c', 'b', 'n', 'p', 'm'], code)
 
 
 def buildbracemap(code):
   temp_bracestack, bracemap = [], {}
 
   for position, command in enumerate(code):
-    if command == "1000": temp_bracestack.append(position)
-    if command == "0111":
+    if command == "o": temp_bracestack.append(position)
+    if command == "c":
       start = temp_bracestack.pop()
       bracemap[start] = position
       bracemap[position] = start
@@ -65,4 +65,3 @@ def main():
   else: print "Usage:", sys.argv[0], "filename"
 
 if __name__ == "__main__": main()
-
