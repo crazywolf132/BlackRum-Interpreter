@@ -1,5 +1,5 @@
 def BlackRum(rum):
-  """A simple BlakRum interpreter in python"""
+  """A simple BlackRum interpreter in python"""
   tape = [0]*(3*10**4)
   ptr = 0
   loops = []
