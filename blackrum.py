@@ -1,67 +1,58 @@
-#!/usr/bin/python
-##
-## BlackRum Interpreter
-## Copyright 2016 Brayden Moon
-##
-## Usage: ./blackrum.py [FILE]
+def BlackRum(rum):
+  """A simple BlakRum interpreter in python"""
+  tape = [0]*(3*10**4)
+  ptr = 0
+  loops = []
+  i = 0
+  res = ""
+  while i < len(rum):
+    c = rum[i]
+    #parse the operators, update the tape
+    if c == "p":
+      tape[ptr] = (tape[ptr] + 1) % 256
+    elif c == "m":
+      tape[ptr] = (tape[ptr] - 1) % 256
+    elif c == "n":
+      ptr += 1
+      if ptr >= len(tape):
+        raise ValueError('Segmentation fault')
+    elif c == "b":
+      ptr -= 1
+      if ptr < 0:
+        raise ValueError('Segmentation fault')
+    elif c == "r":
+      res += chr(tape[ptr])
+    elif c == "i":
+      c = ord(sys.stdin.read(1))
+      if c != 26:
+          tape[ptr] = c
+    elif c == "o":
+      #Check the tape
+      if tape[ptr] > 0:
+        #Add the index to the stack
+        loops.append(i - 1)
+      else:
+        #Find the closing brace with a stack operation (get m to be 0)
+        m = 1
+        j = i + 1
+        while j < len(rum) and m > 0:
+          if rum[j] == "o":
+            m += 1
+          elif rum[j] == "c":
+            m -= 1
+          j += 1
+        if m > 0:
+          raise ValueError('Mismatched loops')
+        #move the loop
+        i = j - 1
+    elif c == "c":
+      if len(loops) == 0:
+        raise ValueError('Mismatched loops')
+      #go back to the start of the loop
+      i = loops.pop()
+    i += 1
+  return res
 
-import sys
-import getch
-
-def execute(filename):
-  f = open(filename, "r")
-  evaluate(f.read())
-  f.close()
-
-
-def evaluate(code):
-  code     = cleanup(list(code))
-  bracemap = buildbracemap(code)
-
-  cells, codeptr, cellptr = [0], 0, 0
-
-  while codeptr < len(code):
-    command = code[codeptr]
-
-    if command == "n":
-      cellptr += 1
-      if cellptr == len(cells): cells.append(0)
-
-    if command == "b":
-      cellptr = 0 if cellptr <= 0 else cellptr - 1
-
-    if command == "p":
-      cells[cellptr] = cells[cellptr] + 1 if cells[cellptr] < 255 else 0
-
-    if command == "m":
-      cells[cellptr] = cells[cellptr] - 1 if cells[cellptr] > 0 else 255
-
-    if command == "o" and cells[cellptr] == 0: codeptr = bracemap[codeptr]
-    if command == "c" and cells[cellptr] != 0: codeptr = bracemap[codeptr]
-    if command == "r": sys.stdout.write(chr(cells[cellptr]))
-    if command == "i": cells[cellptr] = ord(getch.getch())
-
-    codeptr += 1
-
-
-def cleanup(code):
-  return filter(lambda x: x in ['r', 'i', 'o', 'c', 'b', 'n', 'p', 'm'], code)
-
-
-def buildbracemap(code):
-  temp_bracestack, bracemap = [], {}
-
-  for position, command in enumerate(code):
-    if command == "o": temp_bracestack.append(position)
-    if command == "c":
-      start = temp_bracestack.pop()
-      bracemap[start] = position
-      bracemap[position] = start
-  return bracemap
-
-
-def main():
-  if len(sys.argv) == 2: execute(sys.argv[1])
-  else: print "Usage:", sys.argv[0], "filename"
-
-if __name__ == "__main__": main()
+if __name__=="__main__":
+  import sys
+  print BlackRum(sys.argv[1])
